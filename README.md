@@ -115,9 +115,30 @@ const defaultLocation = process.env.DB_LOCATION || "/etc/todos/todo.db";
 const location = process.env.NODE_ENV === "test" ? ":memory:" : defaultLocation;
 ```
 
-## 7. SDLC de seguridad
-
-En `docs/sdlc.md` encontrarás el detalle completo de cada fase del ciclo de vida de desarrollo seguro que hemos seguido.
+### 7. SDLC de seguridad (resumen)
+1. **Requisitos & amenazas**  
+   - Identificación de activos (datos, JWT_SECRET, DB)  
+   - Modelo de amenazas (OWASP Threat Dragon → `threatmodel.json`)  
+2. **Diseño seguro**  
+   - Arquitectura en capas: rutas / persistencia / UI  
+   - Principio de menor privilegio: usuario `appuser` en Docker, permisos `/etc/todos`  
+3. **Implementación**  
+   - Validación de input y sanitización  
+   - Uso de prepared statements en SQL  
+   - Gestión de secretos vía `.env`, sin hard‑code  
+4. **Revisión & SAST**  
+   - ESLint + `eslint-plugin-security`  
+   - `npm audit --json > docs/audit.json`  
+5. **Tests & DAST**  
+   - `jest --coverage`  
+   - `supertest` contra `http://localhost:3000`  
+6. **Contenedores**  
+   - `docker build --no-cache -t mi-app-segura .`  
+   - Usuario no‑root + `docker scan`  
+7. **Despliegue**  
+   - `docker compose up --build --abort-on-container-exit`  
+8. **Monitorización**  
+   - Logs con `docker logs`, alertas en Prometheus/Grafana  
 
 ## 8. Historial de comandos clave
 
