@@ -4,25 +4,27 @@ FROM node:18-alpine
 # 2. Definimos el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# 3. Copiamos los ficheros de dependencias y las instalamos solo para producción
+# 3. Copiamos package.json y package-lock.json y las instalamos solo para producción
 COPY package*.json ./
 RUN npm install --only=production
 
 # 4. Copiamos el resto del código de la aplicación
 COPY . .
 
-# 5. Creamos un usuario sin privilegios (no root)
+# 5. Creamos un grupo y un usuario sin privilegios (no root)
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# 6. Creamos el directorio que la app necesita y le damos permisos
-RUN mkdir -p /etc/todos && \
-    chown appuser:appgroup /etc/todos
+# 6. Creamos el directorio para la base de datos y asignamos permisos
+RUN mkdir -p /etc/todos && chown appuser:appgroup /etc/todos
 
-# 7. Cambiamos a appuser (que ya podrá escribir en /etc/todos)
+# 7. Fijamos la variable de entorno para la ruta de la BD dentro del contenedor
+ENV DB_LOCATION=/etc/todos/todo.db
+
+# 8. Cambiamos al usuario sin privilegios
 USER appuser
 
-# 8. Indicamos qué puerto va a exponer la aplicación
+# 9. Exponemos el puerto en el que corre la aplicación
 EXPOSE 3000
 
-# 9. Comando que se ejecuta al arrancar el contenedor
-CMD ["node", "src/index.js"]
+# 10. Comando de arranque usando el script start definido en package.json
+CMD ["npm", "start"]
