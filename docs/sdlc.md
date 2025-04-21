@@ -1,66 +1,87 @@
-# Ciclo de Vida de Desarrollo de Software (SDLC)
+# 🔒 SDLC de Seguridad
 
-Este documento describe las fases del SDLC aplicado a **mi-app-segura**, con un enfoque especial en la seguridad en cada etapa.
-
----
-
-## 1. Planificación
-- Definición de objetivos y alcance.
-- Análisis preliminar de riesgos de seguridad.
-- Selección de tecnologías: Node.js 18, SQLite, Docker.
-
-## 2. Análisis de requisitos
-- Requisitos funcionales (CRUD de tareas).
-- Requisitos no funcionales (rendimiento, escalabilidad).
-- Requisitos de seguridad:
-  - Autenticación y autorización (JWT).
-  - Gestión segura de secretos (`.env`, JWT_SECRET).
-  - Validación y saneamiento de entradas (OWASP Top 10).
-
-## 3. Diseño
-- Arquitectura monolítica con capas: presentación, negocio, persistencia.
-- Diagrama de flujo de datos.
-- Modelado de la base de datos: tabla `Items`.
-- Diseño de Dockerfile minimalista y `docker-compose`:
-  - Usuario no root (`appuser`).
-  - Montaje de volumen seguro para la base de datos.
-
-## 4. Implementación
-- Estándares de codificación y linters.
-- Estructura de carpetas: `src/`, `spec/`, `app/`.
-- Variables de entorno y `.env.example`.
-- Control de versiones con Git:
-  - Branch `main`; commits descriptivos (Conventional Commits).
-
-## 5. Pruebas
-- Pruebas unitarias y de integración con Jest y Supertest.
-- Pruebas de persistencia (`sqlite.spec.js`).
-- Pruebas de endpoints (healthcheck, CRUD).
-- Pruebas de seguridad:
-  - Escaneo de dependencias (`npm audit`).
-  - Análisis estático de código.
-
-## 6. Despliegue
-- Construcción de la imagen Docker (`docker compose build`).
-- Eliminación de la instrucción `version` obsoleta en `docker-compose.yml`.
-- Puesta en producción:
-  - Orquestación con Docker Compose.
-  - Variables de entorno seguras en el host.
-
-## 7. Mantenimiento
-- Monitorización de logs y métricas.
-- Actualización de dependencias y Node.js.
-- Gestión de vulnerabilidades (alertas de `npm audit`).
-- Backup y restauración de la base de datos SQLite.
-
-## 8. Retrospectiva de seguridad
-- Revisión postmortem de incidentes.
-- Actualización de políticas y checklist de seguridad.
-- Capacitación continua del equipo en prácticas seguras.
+Este documento detalla cada fase del **Secure Development Lifecycle (SDLC)** aplicada en **Mi App Segura**.
 
 ---
 
-**Referencias**  
-- OWASP Top 10  
-- Guía de buenas prácticas de Docker  
-- Jest y Supertest documentation
+## 1. Recogida de requisitos y análisis
+
+- **Identificación de activos**: Datos de usuario, JWT_SECRET, base de datos.  
+- **Evaluación de amenazas**: Ataques de inyección SQL, fuga de secretos, contenedores inseguros.  
+- **Definición de políticas de seguridad**: Uso de variables `JWT_SECRET`, validación de entrada, control de permisos.
+
+## 2. Diseño seguro
+
+- **Arquitectura de módulos**: Separación de responsabilidades (rutas, persistencia, lógica de negocio).  
+- **Patrones de seguridad**: Principio de menor privilegio (appuser en Docker), folder `/etc/todos` propiedad de appuser.  
+- **Modelo de datos**: Tabla `Items(id TEXT PRIMARY KEY, name TEXT, completed INTEGER)`.
+
+## 3. Implementación con buenas prácticas
+
+- **Validación de entradas**: Sanitización y tipado en capa de servicios.  
+- **Gestión de secretos**:  
+  - `.env` con `JWT_SECRET`, `DB_LOCATION`  
+  - Nunca hardcodear en código.  
+- **Código seguro**: Uso de `prepared statements` en SQLite (`db.run(..., [params])`).
+
+## 4. Revisión de código y análisis estático
+
+- **Pull Requests (PRs)** revisados por pares.  
+- **Herramientas SAST**:  
+  - ESLint con reglas de seguridad (plugin `eslint-plugin-security`).  
+  - Scan de dependencias con `npm audit`.  
+
+## 5. Tests de seguridad (SAST/DAST)
+
+- **Automatización de pruebas**:  
+  - **Jest** para unit y integration tests.  
+  - **Supertest** para endpoints HTTP.  
+- **Cobertura de seguridad**: Tests de endpoints, pruebas de persistencia aislada (`:memory:` en TEST env).
+
+## 6. Contenedorización y despliegue seguro
+
+- **Dockerfile** seguro:  
+  - Imágenes base `node:18-alpine` ligeras.  
+  - Creación de usuario no-root `appuser` y grupo `appgroup`.  
+  - Carpeta `/etc/todos` con permisos ajustados.  
+- **Docker Compose**:  
+  - Variables de entorno cargadas en runtime.  
+  - Red interna aislada.  
+
+## 7. Operaciones y monitorización
+
+- **Logging**: Console logs mínimo en `NODE_ENV !== 'test'`.  
+- **Supervisión**: Integrar con herramientas de monitorización (Prometheus, Grafana).  
+- **Actualizaciones**:  
+  - Parches regulares de dependencias (`npm audit fix`).  
+  - Reconstrucción de imágenes periódica.
+
+## 8. Resumen de comandos SDLC
+
+```bash
+# Inicializar repositorio
+git init
+git remote add origin <repo-url>
+
+# Desarollo local
+npm install
+npm start
+
+# Tests automáticos
+npm test
+npm run test:coverage
+
+# Escaneo de seguridad
+npm audit fix
+
+# Docker
+docker compose up --build
+docker compose down
+
+# Flujo Git
+git checkout -b feature/nueva-funcionalidad
+# ...
+git add .
+git commit -m "feat: descripción"
+git push origin feature/nueva-funcionalidad
+```
