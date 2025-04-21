@@ -1,103 +1,137 @@
-const sqlite3 = require('sqlite3').verbose();
-const fs = require('fs');
-const location = process.env.SQLITE_DB_LOCATION || '/etc/todos/todo.db';
+// app/src/persistence/sqlite.js
+const sqlite3 = require("sqlite3").verbose();
+const fs = require("fs");
+const path = require("path");
 
-let db, dbAll, dbRun;
+// Ruta por defecto o memoria en tests
+const defaultLocation = process.env.DB_LOCATION || "/etc/todos/todo.db";
+const location = process.env.NODE_ENV === "test" ? ":memory:" : defaultLocation;
 
+let db;
+
+/**
+ * Inicializa la base de datos:
+ * - Si no es in-memory, crea el directorio
+ * - Crea la tabla Items si no existe
+ */
 function init() {
-    const dirName = require('path').dirname(location);
-    if (!fs.existsSync(dirName)) {
-        fs.mkdirSync(dirName, { recursive: true });
-    }
+    return new Promise((resolve, reject) => {
+        if (location !== ":memory:") {
+            const dirName = path.dirname(location);
+            if (!fs.existsSync(dirName)) {
+                fs.mkdirSync(dirName, { recursive: true });
+            }
+            console.log(`Using sqlite database at ${location}`);
+        }
 
-    return new Promise((acc, rej) => {
         db = new sqlite3.Database(location, err => {
-            if (err) return rej(err);
-
-            if (process.env.NODE_ENV !== 'test')
-                console.log(`Using sqlite database at ${location}`);
-
+            if (err) return reject(err);
+            // Crear tabla Items si aún no existe
             db.run(
-                'CREATE TABLE IF NOT EXISTS todo_items (id varchar(36), name varchar(255), completed boolean)',
-                (err, result) => {
-                    if (err) return rej(err);
-                    acc();
-                },
+                `CREATE TABLE IF NOT EXISTS Items (
+                    id TEXT PRIMARY KEY,
+                    name TEXT,
+                    completed INTEGER
+                )`,
+                [],
+                tableErr => tableErr ? reject(tableErr) : resolve()
             );
         });
     });
 }
 
-async function teardown() {
-    return new Promise((acc, rej) => {
-        db.close(err => {
-            if (err) rej(err);
-            else acc();
+/**
+ * Cierra la conexión a la base de datos
+ */
+function teardown() {
+    return new Promise((resolve, reject) => {
+        if (db) {
+            db.close(err => err ? reject(err) : resolve());
+        } else {
+            resolve();
+        }
+    });
+}
+
+/**
+ * Obtiene todas las tareas (mapea completed a boolean)
+ */
+function getItems() {
+    return new Promise((resolve, reject) => {
+        db.all("SELECT id, name, completed FROM Items", (err, rows) => {
+            if (err) return reject(err);
+            const mapped = rows.map(r => ({
+                id: r.id,
+                name: r.name,
+                completed: !!r.completed
+            }));
+            resolve(mapped);
         });
     });
 }
 
-async function getItems() {
-    return new Promise((acc, rej) => {
-        db.all('SELECT * FROM todo_items', (err, rows) => {
-            if (err) return rej(err);
-            acc(
-                rows.map(item =>
-                    Object.assign({}, item, {
-                        completed: item.completed === 1,
-                    }),
-                ),
-            );
-        });
+/**
+ * Obtiene una tarea por id (mapea completed a boolean)
+ */
+function getItem(id) {
+    return new Promise((resolve, reject) => {
+        db.get(
+            "SELECT id, name, completed FROM Items WHERE id = ?",
+            [id],
+            (err, row) => {
+                if (err) return reject(err);
+                if (!row) return resolve(null);
+                resolve({
+                    id: row.id,
+                    name: row.name,
+                    completed: !!row.completed
+                });
+            }
+        );
     });
 }
 
-async function getItem(id) {
-    return new Promise((acc, rej) => {
-        db.all('SELECT * FROM todo_items WHERE id=?', [id], (err, rows) => {
-            if (err) return rej(err);
-            acc(
-                rows.map(item =>
-                    Object.assign({}, item, {
-                        completed: item.completed === 1,
-                    }),
-                )[0],
-            );
-        });
-    });
-}
-
-async function storeItem(item) {
-    return new Promise((acc, rej) => {
+/**
+ * Inserta una nueva tarea
+ */
+function storeItem(item) {
+    return new Promise((resolve, reject) => {
         db.run(
-            'INSERT INTO todo_items (id, name, completed) VALUES (?, ?, ?)',
+            "INSERT INTO Items (id, name, completed) VALUES (?, ?, ?)",
             [item.id, item.name, item.completed ? 1 : 0],
-            err => {
-                if (err) return rej(err);
-                acc();
-            },
+            function(err) {
+                if (err) reject(err);
+                else resolve(item);
+            }
         );
     });
 }
 
-async function updateItem(id, item) {
-    return new Promise((acc, rej) => {
+/**
+ * Actualiza una tarea existente:
+ * acepta (id, item) para alinear con los tests
+ */
+function updateItem(id, item) {
+    return new Promise((resolve, reject) => {
         db.run(
-            'UPDATE todo_items SET name=?, completed=? WHERE id = ?',
+            "UPDATE Items SET name = ?, completed = ? WHERE id = ?",
             [item.name, item.completed ? 1 : 0, id],
-            err => {
-                if (err) return rej(err);
-                acc();
-            },
+            function(err) {
+                if (err) return reject(err);
+                resolve(item);
+            }
         );
     });
-} 
+}
 
-async function removeItem(id) {
-    return new Promise((acc, rej) => {
-        db.run('DELETE FROM todo_items WHERE id = ?', [id], err => {
-            if (err) return rej(err);
-            acc();
+/**
+ * Elimina una tarea por id
+ */
+function removeItem(id) {
+    return new Promise((resolve, reject) => {
+        db.run("DELETE FROM Items WHERE id = ?", [id], function(err) {
+            if (err) reject(err);
+            else resolve();
         });
     });
 }
@@ -109,5 +143,5 @@ module.exports = {
     getItem,
     storeItem,
     updateItem,
-    removeItem,
+    removeItem
 };
