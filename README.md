@@ -136,3 +136,9 @@ npm install --save-dev jest supertest
 export NODE_ENV=test
 npm test
 ```
+
+## 9. Desarrolladores
+
+David Rojo Villalba -- https://github.com/ddrojovillalba/mi-app-segura.git
+Miguel Angel Ruiz Miranda -- https://github.com/Maikel2k18/mi-app-segura.git
+Victor Herrero Esteban -- https://github.com/TechViking-afk/mi-app-segura.git
