@@ -8,13 +8,14 @@ Documento que integra **preparación de entorno**, **resolución de pruebas** y 
 
 Para ejecutar y probar la aplicación es necesario instalar:
 
-- **NodeJS**: Entorno de ejecución JavaScript de código abierto.  
-  - Descarga: https://nodejs.org/es  
+- **NodeJS**: Entorno de ejecución JavaScript de código abierto.
+
+  - Descarga: https://nodejs.org/es
   - Documentación: https://learn.microsoft.com/es-es/windows/dev-environment/javascript/nodejs-overview
 
-- **NPM**: Gestor de paquetes de Node.js.  
-  - Instalación incluida con NodeJS.  
-  - Para actualizar a la última versión:  
+- **NPM**: Gestor de paquetes de Node.js.
+  - Instalación incluida con NodeJS.
+  - Para actualizar a la última versión:
     ```bash
     npm install -g npm@11.3.0
     ```
@@ -47,7 +48,7 @@ Al ejecutar pruebas con Jest:
 npm test
 ```
 
-Se detectó un error en `spec/persistence/sqlite.spec.js:18:25`, causado por la ruta fija `/etc/todos/` sin permisos de escritura.  
+Se detectó un error en `spec/persistence/sqlite.spec.js:18:25`, causado por la ruta fija `/etc/todos/` sin permisos de escritura.
 
 **Solución**: modificar `sqlite.js` y usar ruta relativa:
 
@@ -73,27 +74,27 @@ git push -u origin main
 
 ## 5. Análisis de Medidas de Seguridad en el S-SDLC
 
-| Etapa                        | Responsable                   | Medidas identificadas                                                             |
-|------------------------------|-------------------------------|-----------------------------------------------------------------------------------|
-| **Requisitos**               | Víctor Herrero Esteban        | Política RBAC; definición de criterios de seguridad en el backlog.                |
-| **Diseño**                   | Miguel Ángel Ruiz Miranda     | Modelado de amenazas; validación de entradas; diagramas de flujo de seguridad.     |
-| **Implementación**           | David Rojo Villalba           | Uso de librerías seguras; prepared statements en SQLite; manejo seguro de errores. |
-| **Pruebas**                  | Víctor Herrero Esteban        | SAST con ESLint; pruebas de endpoints con Supertest; cobertura de código ≥ 80%.    |
-| **Despliegue y Mantenimiento** | Miguel Ángel Ruiz Miranda   | Escaneo de vulnerabilidades con npm audit; monitorización continua con alertas.   |
+| Etapa                          | Responsable               | Medidas identificadas                                                              |
+| ------------------------------ | ------------------------- | ---------------------------------------------------------------------------------- |
+| **Requisitos**                 | Víctor Herrero Esteban    | Política RBAC; definición de criterios de seguridad en el backlog.                 |
+| **Diseño**                     | Miguel Ángel Ruiz Miranda | Modelado de amenazas; validación de entradas; diagramas de flujo de seguridad.     |
+| **Implementación**             | David Rojo Villalba       | Uso de librerías seguras; prepared statements en SQLite; manejo seguro de errores. |
+| **Pruebas**                    | Víctor Herrero Esteban    | SAST con ESLint; pruebas de endpoints con Supertest; cobertura de código ≥ 80%.    |
+| **Despliegue y Mantenimiento** | Miguel Ángel Ruiz Miranda | Escaneo de vulnerabilidades con npm audit; monitorización continua con alertas.    |
 
 ---
 
 ## 6. Unificación de Aplicaciones y DevSecOps
 
-| Fase DevSecOps     | Descripción                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
-| Planificación      | Requisitos de seguridad en backlog; historias de usuario con criterios.     |
-| Desarrollo         | Análisis en tiempo real con ESLint; pull requests revisados por pares.      |
-| Construcción       | Build automático con `npm ci && npm run build`; SAST + `npm audit`.         |
-| Pruebas            | `npm test -- --coverage`; validación de endpoints REST.                     |
-| Release            | Empaquetado de la imagen Docker con `docker build`.                         |
-| Despliegue         | `docker compose up -d`; Infraestructura como código con políticas seguras.  |
-| Operaciones        | Monitorización con Prometheus/Grafana; SIEM para eventos de seguridad.      |
+| Fase DevSecOps | Descripción                                                                |
+| -------------- | -------------------------------------------------------------------------- |
+| Planificación  | Requisitos de seguridad en backlog; historias de usuario con criterios.    |
+| Desarrollo     | Análisis en tiempo real con ESLint; pull requests revisados por pares.     |
+| Construcción   | Build automático con `npm ci && npm run build`; SAST + `npm audit`.        |
+| Pruebas        | `npm test -- --coverage`; validación de endpoints REST.                    |
+| Release        | Empaquetado de la imagen Docker con `docker build`.                        |
+| Despliegue     | `docker compose up -d`; Infraestructura como código con políticas seguras. |
+| Operaciones    | Monitorización con Prometheus/Grafana; SIEM para eventos de seguridad.     |
 
 ---
 

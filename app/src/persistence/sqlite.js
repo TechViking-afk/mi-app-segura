@@ -1,11 +1,11 @@
 // app/src/persistence/sqlite.js
-const sqlite3 = require("sqlite3").verbose();
-const fs = require("fs");
-const path = require("path");
+const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
+const path = require('path');
 
 // Ruta por defecto o memoria en tests
-const defaultLocation = process.env.DB_LOCATION || "/etc/todos/todo.db";
-const location = process.env.NODE_ENV === "test" ? ":memory:" : defaultLocation;
+const defaultLocation = process.env.DB_LOCATION || '/etc/todos/todo.db';
+const location = process.env.NODE_ENV === 'test' ? ':memory:' : defaultLocation;
 
 let db;
 
@@ -16,7 +16,7 @@ let db;
  */
 function init() {
     return new Promise((resolve, reject) => {
-        if (location !== ":memory:") {
+        if (location !== ':memory:') {
             const dirName = path.dirname(location);
             if (!fs.existsSync(dirName)) {
                 fs.mkdirSync(dirName, { recursive: true });
@@ -24,7 +24,7 @@ function init() {
             console.log(`Using sqlite database at ${location}`);
         }
 
-        db = new sqlite3.Database(location, err => {
+        db = new sqlite3.Database(location, (err) => {
             if (err) return reject(err);
             // Crear tabla Items si aún no existe
             db.run(
@@ -34,7 +34,7 @@ function init() {
                     completed INTEGER
                 )`,
                 [],
-                tableErr => tableErr ? reject(tableErr) : resolve()
+                (tableErr) => (tableErr ? reject(tableErr) : resolve()),
             );
         });
     });
@@ -46,7 +46,7 @@ function init() {
 function teardown() {
     return new Promise((resolve, reject) => {
         if (db) {
-            db.close(err => err ? reject(err) : resolve());
+            db.close((err) => (err ? reject(err) : resolve()));
         } else {
             resolve();
         }
@@ -58,12 +58,12 @@ function teardown() {
  */
 function getItems() {
     return new Promise((resolve, reject) => {
-        db.all("SELECT id, name, completed FROM Items", (err, rows) => {
+        db.all('SELECT id, name, completed FROM Items', (err, rows) => {
             if (err) return reject(err);
-            const mapped = rows.map(r => ({
+            const mapped = rows.map((r) => ({
                 id: r.id,
                 name: r.name,
-                completed: !!r.completed
+                completed: !!r.completed,
             }));
             resolve(mapped);
         });
@@ -76,7 +76,7 @@ function getItems() {
 function getItem(id) {
     return new Promise((resolve, reject) => {
         db.get(
-            "SELECT id, name, completed FROM Items WHERE id = ?",
+            'SELECT id, name, completed FROM Items WHERE id = ?',
             [id],
             (err, row) => {
                 if (err) return reject(err);
@@ -84,9 +84,9 @@ function getItem(id) {
                 resolve({
                     id: row.id,
                     name: row.name,
-                    completed: !!row.completed
+                    completed: !!row.completed,
                 });
-            }
+            },
         );
     });
 }
@@ -97,12 +97,12 @@ function getItem(id) {
 function storeItem(item) {
     return new Promise((resolve, reject) => {
         db.run(
-            "INSERT INTO Items (id, name, completed) VALUES (?, ?, ?)",
+            'INSERT INTO Items (id, name, completed) VALUES (?, ?, ?)',
             [item.id, item.name, item.completed ? 1 : 0],
-            function(err) {
+            function (err) {
                 if (err) reject(err);
                 else resolve(item);
-            }
+            },
         );
     });
 }
@@ -114,12 +114,12 @@ function storeItem(item) {
 function updateItem(id, item) {
     return new Promise((resolve, reject) => {
         db.run(
-            "UPDATE Items SET name = ?, completed = ? WHERE id = ?",
+            'UPDATE Items SET name = ?, completed = ? WHERE id = ?',
             [item.name, item.completed ? 1 : 0, id],
-            function(err) {
+            function (err) {
                 if (err) return reject(err);
                 resolve(item);
-            }
+            },
         );
     });
 }
@@ -129,7 +129,7 @@ function updateItem(id, item) {
  */
 function removeItem(id) {
     return new Promise((resolve, reject) => {
-        db.run("DELETE FROM Items WHERE id = ?", [id], function(err) {
+        db.run('DELETE FROM Items WHERE id = ?', [id], function (err) {
             if (err) reject(err);
             else resolve();
         });
@@ -143,5 +143,5 @@ module.exports = {
     getItem,
     storeItem,
     updateItem,
-    removeItem
+    removeItem,
 };
