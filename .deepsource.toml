@@ -1,73 +1,48 @@
 # .deepsource.toml
-# Configuración de análisis estático y de seguridad para mi-app-segura
+# Configuración de DeepSource para mi-app-segura
  
-version = 1  # Versión del esquema de DeepSource
+version = 1   # Versión del esquema de DeepSource
  
-# --------------------------------------
-# 1. Rutas a omitir (no las analizar)
-# --------------------------------------
-# Evita analizar dependencias, builds y archivos de imagen/documentación.
+# 1. Rutas que no queremos que se analicen (dependencias, builds, imágenes…)
 skip_paths = [
   "node_modules/",
-  "build/",
   "dist/",
-  "docs/images/",
+  "build/",
+  "docs/images/"
 ]
  
-# --------------------------------------
-# 2. Configuración general de problemas
-# --------------------------------------
-# Solo muestra problemas de severidad 'major' o superior.
+# 2. Ajustes globales de problemas
+#    Solo queremos ver problemas de nivel “major” o más grave.
 minimum_severity = "major"
  
 [issues]
-# Se salta los tests y las documentaciones de los informes
+# No necesitamos analizar los tests automáticos ni la documentación
 exclude = [
   "tests/**/*.js",
-  "docs/**/*.md",
+  "docs/**/*.md"
 ]
  
-# --------------------------------------
-# 3. Definición de analizadores
-# --------------------------------------
+# 3. Analizadores
+#    DeepSource unifica ESLint, detección de vulnerabilidades y demás
+#    en un único analyzer “javascript”.
  
-# 3.1 Analizador genérico de JavaScript
 [[analyzers]]
 name    = "javascript"
 enabled = true
  
 [analyzers.javascript]
-# Versión mínima de Node.js para tener en cuenta sintaxis moderna
+# Le indicamos que usamos Node.js v18+ y que también tenemos entorno de browser y Jest
 runtime_version = ">=18"
+environment     = ["nodejs", "browser", "jest"]
  
-# 3.2 ESLint
-[[analyzers]]
-name        = "eslint"
-enabled     = true
-# Indica dónde está la configuración de ESLint
-config_path = ".eslintrc.js"
+# 4. Formatter automático
+#    Utilizamos Prettier para formatear el código en cada push/Push request
  
-# 3.3 Reglas de seguridad SAST
-[[analyzers]]
-name    = "security"
+[[transformers]]
+name    = "prettier"
 enabled = true
  
-# 3.4 Verificador de formato de código
-[[analyzers]]
-name    = "format"
-enabled = true
- 
-# --------------------------------------
-# 4. Correcciones automáticas
-# --------------------------------------
-[autofix]
-enabled = true
-# DeepSource intentará aplicar estas reglas automáticamente
-rules = ["eslint", "format"]
- 
-# --------------------------------------
-# 5. Estado en Pull Requests y commits
-# --------------------------------------
+# 5. Integración en el flujo de Git
 [reporter]
-# Añade un status check en GitHub/GitLab para cada push o pull request
+# Aparecerá un status check “DeepSource/analysis” en cada commit y Push request
 reports = ["commit", "pull_request"]
