@@ -2,36 +2,36 @@
 
 Este proyecto es una **aplicación de gestión de tareas (todo app)** construida con Node.js y SQLite, empaquetada en Docker y diseñada siguiendo todo el ciclo de vida de desarrollo seguro (SDLC). A continuación encontrarás:
 
-1. **Descripción del proyecto**  
-2. **Requisitos previos**  
-3. **Instalación y ejecución**  
-4. **Estructura del repositorio**  
-5. **Desarrollo y testing**  
-6. **Docker**  
-7. **SDLC de seguridad**  
-8. **Historial de comandos**  
+1. **Descripción del proyecto**
+2. **Requisitos previos**
+3. **Instalación y ejecución**
+4. **Estructura del repositorio**
+5. **Desarrollo y testing**
+6. **Docker**
+7. **SDLC de seguridad**
+8. **Historial de comandos**
 
 ---
 
 ## 1. Descripción del proyecto
 
-- CRUD de tareas con endpoints RESTful:  
-  - **GET /**: Healthcheck  
-  - **GET /items**: Listar tareas  
-  - **GET /items/:id**: Obtener tarea por ID  
-  - **POST /items**: Crear tarea  
-  - **PUT /items/:id**: Actualizar tarea  
-  - **DELETE /items/:id**: Eliminar tarea  
-- Persistencia en SQLite (fichero en `/etc/todos/todo.db` o en memoria en tests).  
-- Contenedorizado con Docker y Docker Compose.  
-- Pruebas automatizadas con Jest + Supertest.  
+- CRUD de tareas con endpoints RESTful:
+  - **GET /**: Healthcheck
+  - **GET /items**: Listar tareas
+  - **GET /items/:id**: Obtener tarea por ID
+  - **POST /items**: Crear tarea
+  - **PUT /items/:id**: Actualizar tarea
+  - **DELETE /items/:id**: Eliminar tarea
+- Persistencia en SQLite (fichero en `/etc/todos/todo.db` o en memoria en tests).
+- Contenedorizado con Docker y Docker Compose.
+- Pruebas automatizadas con Jest + Supertest.
 
 ## 2. Requisitos previos
 
-- **Node.js** ≥18  
-- **npm** ≥11  
-- **Docker** y **Docker Compose**  
-- **Git**  
+- **Node.js** ≥18
+- **npm** ≥11
+- **Docker** y **Docker Compose**
+- **Git**
 
 ## 3. Instalación y ejecución
 
@@ -117,7 +117,7 @@ const location = process.env.NODE_ENV === "test" ? ":memory:" : defaultLocation;
 
 ## 7. SDLC de seguridad
 
-En `docs/sdlc.md` encontrarás el detalle completo de cada fase del ciclo de vida de desarrollo seguro que hemos seguido.  
+En `docs/sdlc.md` encontrarás el detalle completo de cada fase del ciclo de vida de desarrollo seguro que hemos seguido.
 
 ## 8. Historial de comandos clave
 
