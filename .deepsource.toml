@@ -1,10 +1,73 @@
-version = 1
-
+# .deepsource.toml
+# Configuración de análisis estático y de seguridad para mi-app-segura
+ 
+version = 1  # Versión del esquema de DeepSource
+ 
+# --------------------------------------
+# 1. Rutas a omitir (no las analizar)
+# --------------------------------------
+# Evita analizar dependencias, builds y archivos de imagen/documentación.
+skip_paths = [
+  "node_modules/",
+  "build/",
+  "dist/",
+  "docs/images/",
+]
+ 
+# --------------------------------------
+# 2. Configuración general de problemas
+# --------------------------------------
+# Solo muestra problemas de severidad 'major' o superior.
+minimum_severity = "major"
+ 
+[issues]
+# Se salta los tests y las documentaciones de los informes
+exclude = [
+  "tests/**/*.js",
+  "docs/**/*.md",
+]
+ 
+# --------------------------------------
+# 3. Definición de analizadores
+# --------------------------------------
+ 
+# 3.1 Analizador genérico de JavaScript
 [[analyzers]]
-name = "javascript"
-
-  [analyzers.meta]
-  environment = [
-    "nodejs",
-    "jest"
-  ]
+name    = "javascript"
+enabled = true
+ 
+[analyzers.javascript]
+# Versión mínima de Node.js para tener en cuenta sintaxis moderna
+runtime_version = ">=18"
+ 
+# 3.2 ESLint
+[[analyzers]]
+name        = "eslint"
+enabled     = true
+# Indica dónde está la configuración de ESLint
+config_path = ".eslintrc.js"
+ 
+# 3.3 Reglas de seguridad SAST
+[[analyzers]]
+name    = "security"
+enabled = true
+ 
+# 3.4 Verificador de formato de código
+[[analyzers]]
+name    = "format"
+enabled = true
+ 
+# --------------------------------------
+# 4. Correcciones automáticas
+# --------------------------------------
+[autofix]
+enabled = true
+# DeepSource intentará aplicar estas reglas automáticamente
+rules = ["eslint", "format"]
+ 
+# --------------------------------------
+# 5. Estado en Pull Requests y commits
+# --------------------------------------
+[reporter]
+# Añade un status check en GitHub/GitLab para cada push o pull request
+reports = ["commit", "pull_request"]
