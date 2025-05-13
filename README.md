@@ -2,40 +2,40 @@
 
 Este proyecto es una **aplicación de gestión de tareas (todo app)** construida con Node.js y SQLite, empaquetada en Docker y diseñada siguiendo todo el ciclo de vida de desarrollo seguro (SDLC) y prácticas DevSecOps. A continuación encontrarás:
 
-1. Descripción del proyecto  
-2. Requisitos previos  
-3. Instalación y ejecución  
-4. Estructura del repositorio  
-5. Desarrollo y testing  
-6. Docker  
-7. SDLC de seguridad  
-8. Historial de comandos clave  
-9. Evaluación de seguridad con herramientas automáticas  
-   - 9.1 NPM Audit  
-   - 9.2 DeepSource  
+1. Descripción del proyecto
+2. Requisitos previos
+3. Instalación y ejecución
+4. Estructura del repositorio
+5. Desarrollo y testing
+6. Docker
+7. SDLC de seguridad
+8. Historial de comandos clave
+9. Evaluación de seguridad con herramientas automáticas
+   - 9.1 NPM Audit
+   - 9.2 DeepSource
 10. Desarrolladores
 
 ---
 
 ## 1. Descripción del proyecto
 
-- CRUD de tareas con endpoints RESTful:  
-  - GET /: Healthcheck  
-  - GET /items: Listar tareas  
-  - GET /items/:id: Obtener tarea por ID  
-  - POST /items: Crear tarea  
-  - PUT /items/:id: Actualizar tarea  
-  - DELETE /items/:id: Eliminar tarea  
-- Persistencia en SQLite (fichero en /etc/todos/todo.db o en memoria en tests).  
-- Contenedorizado con Docker y Docker Compose.  
-- Pruebas automatizadas con Jest + Supertest.  
+- CRUD de tareas con endpoints RESTful:
+  - GET /: Healthcheck
+  - GET /items: Listar tareas
+  - GET /items/:id: Obtener tarea por ID
+  - POST /items: Crear tarea
+  - PUT /items/:id: Actualizar tarea
+  - DELETE /items/:id: Eliminar tarea
+- Persistencia en SQLite (fichero en /etc/todos/todo.db o en memoria en tests).
+- Contenedorizado con Docker y Docker Compose.
+- Pruebas automatizadas con Jest + Supertest.
 
 ## 2. Requisitos previos
 
-- Node.js ≥18  
-- npm ≥11  
-- Docker y Docker Compose  
-- Git  
+- Node.js ≥18
+- npm ≥11
+- Docker y Docker Compose
+- Git
 
 ## 3. Instalación y ejecución
 
