@@ -121,7 +121,7 @@ cd app
 npm audit --audit-level=low
 ```
 
-Actualizamos lodash en app/package.json a ^4.17.21 y volvimos a ejecutar npm audit: 0 vulnerabilidades.
+Actualizamos lodash en app/package.json a 4.17.21 y volvimos a ejecutar npm audit: 1 vulnerabilidad crítica severa.
 
 ### 9.2 DeepSource
 
